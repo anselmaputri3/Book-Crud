@@ -1,4 +1,4 @@
-package com.example.bookcrud.adapter;
+package com.example.bookcrud.presentation.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookcrud.R;
-import com.example.bookcrud.model.Book;
+import com.example.bookcrud.domain.entity.Book;
 
 import java.util.List;
 
@@ -40,13 +40,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     @Override
     public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         Book book = bookList.get(position);
-        holder.tvTitle.setText(book.getTitle());
-        holder.tvAuthor.setText(book.getAuthor());
-        holder.tvYear.setText(String.valueOf(book.getYear()));
-        holder.tvIsbn.setText("ISBN: " + (book.getIsbn() != null ? book.getIsbn() : "-"));
-
-        holder.btnEdit.setOnClickListener(v -> listener.onEditClick(book));
-        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(book));
+        holder.bind(book, listener);
     }
 
     @Override
@@ -60,8 +54,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     }
 
     static class BookViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvAuthor, tvYear, tvIsbn;
-        ImageButton btnEdit, btnDelete;
+        private final TextView tvTitle;
+        private final TextView tvAuthor;
+        private final TextView tvYear;
+        private final TextView tvIsbn;
+        private final ImageButton btnEdit;
+        private final ImageButton btnDelete;
 
         BookViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +69,16 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             tvIsbn = itemView.findViewById(R.id.tvIsbn);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+        }
+
+        void bind(Book book, OnBookClickListener listener) {
+            tvTitle.setText(book.getTitle());
+            tvAuthor.setText(book.getAuthor());
+            tvYear.setText(String.valueOf(book.getYear()));
+            tvIsbn.setText("ISBN: " + (book.getIsbn() != null ? book.getIsbn() : "-"));
+
+            btnEdit.setOnClickListener(v -> listener.onEditClick(book));
+            btnDelete.setOnClickListener(v -> listener.onDeleteClick(book));
         }
     }
 }
