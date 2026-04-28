@@ -1,4 +1,4 @@
-package com.example.bookcrud;
+package com.example.bookcrud.presentation.booklist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,34 +11,40 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookcrud.adapter.BookAdapter;
-import com.example.bookcrud.database.DatabaseHelper;
-import com.example.bookcrud.model.Book;
+import com.example.bookcrud.R;
+import com.example.bookcrud.di.Injection;
+import com.example.bookcrud.domain.entity.Book;
+import com.example.bookcrud.presentation.adapter.BookAdapter;
+import com.example.bookcrud.presentation.addeditbook.AddEditBookActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BookAdapter.OnBookClickListener {
+public class BookListActivity extends AppCompatActivity implements BookAdapter.OnBookClickListener {
 
     private RecyclerView recyclerView;
     private BookAdapter bookAdapter;
-    private DatabaseHelper databaseHelper;
+    private BookListViewModel viewModel;
     private List<Book> bookList;
     private TextView tvEmpty;
-    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        databaseHelper = new DatabaseHelper(this);
+        viewModel = new BookListViewModel(
+                Injection.provideGetAllBooksUseCase(this),
+                Injection.provideDeleteBookUseCase(this),
+                Injection.provideSearchBooksUseCase(this)
+        );
+
         bookList = new ArrayList<>();
 
         recyclerView = findViewById(R.id.recyclerView);
         tvEmpty = findViewById(R.id.tvEmpty);
-        searchView = findViewById(R.id.searchView);
+        SearchView searchView = findViewById(R.id.searchView);
         FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -46,14 +52,14 @@ public class MainActivity extends AppCompatActivity implements BookAdapter.OnBoo
         recyclerView.setAdapter(bookAdapter);
 
         fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AddEditBookActivity.class);
+            Intent intent = new Intent(BookListActivity.this, AddEditBookActivity.class);
             startActivity(intent);
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchBooks(query);
+                performSearch(query);
                 return true;
             }
 
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements BookAdapter.OnBoo
                 if (newText.isEmpty()) {
                     loadBooks();
                 } else {
-                    searchBooks(newText);
+                    performSearch(newText);
                 }
                 return true;
             }
@@ -76,13 +82,13 @@ public class MainActivity extends AppCompatActivity implements BookAdapter.OnBoo
     }
 
     private void loadBooks() {
-        bookList = databaseHelper.getAllBooks();
+        bookList = viewModel.getAllBooks();
         bookAdapter.updateData(bookList);
         updateEmptyView();
     }
 
-    private void searchBooks(String keyword) {
-        bookList = databaseHelper.searchBooks(keyword);
+    private void performSearch(String keyword) {
+        bookList = viewModel.searchBooks(keyword);
         bookAdapter.updateData(bookList);
         updateEmptyView();
     }
@@ -114,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements BookAdapter.OnBoo
                 .setTitle("Hapus Buku")
                 .setMessage("Apakah Anda yakin ingin menghapus \"" + book.getTitle() + "\"?")
                 .setPositiveButton("Hapus", (dialog, which) -> {
-                    databaseHelper.deleteBook(book.getId());
+                    viewModel.deleteBook(book.getId());
                     loadBooks();
                 })
                 .setNegativeButton("Batal", null)

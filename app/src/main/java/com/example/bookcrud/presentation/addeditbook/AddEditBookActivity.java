@@ -1,4 +1,4 @@
-package com.example.bookcrud;
+package com.example.bookcrud.presentation.addeditbook;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -6,14 +6,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bookcrud.database.DatabaseHelper;
-import com.example.bookcrud.model.Book;
+import com.example.bookcrud.R;
+import com.example.bookcrud.di.Injection;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class AddEditBookActivity extends AppCompatActivity {
 
-    private TextInputEditText etTitle, etAuthor, etYear, etIsbn;
-    private DatabaseHelper databaseHelper;
+    private TextInputEditText etTitle;
+    private TextInputEditText etAuthor;
+    private TextInputEditText etYear;
+    private TextInputEditText etIsbn;
+    private AddEditBookViewModel viewModel;
     private boolean isEditMode = false;
     private int bookId = -1;
 
@@ -22,7 +25,10 @@ public class AddEditBookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_book);
 
-        databaseHelper = new DatabaseHelper(this);
+        viewModel = new AddEditBookViewModel(
+                Injection.provideInsertBookUseCase(this),
+                Injection.provideUpdateBookUseCase(this)
+        );
 
         etTitle = findViewById(R.id.etTitle);
         etAuthor = findViewById(R.id.etAuthor);
@@ -54,46 +60,45 @@ public class AddEditBookActivity extends AppCompatActivity {
     }
 
     private void saveBook() {
-        String title = etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
-        String author = etAuthor.getText() != null ? etAuthor.getText().toString().trim() : "";
-        String yearStr = etYear.getText() != null ? etYear.getText().toString().trim() : "";
-        String isbn = etIsbn.getText() != null ? etIsbn.getText().toString().trim() : "";
+        String title = getText(etTitle);
+        String author = getText(etAuthor);
+        String yearStr = getText(etYear);
+        String isbn = getText(etIsbn);
 
-        if (title.isEmpty()) {
-            etTitle.setError("Judul buku harus diisi");
-            etTitle.requestFocus();
-            return;
-        }
-
-        if (author.isEmpty()) {
-            etAuthor.setError("Penulis harus diisi");
-            etAuthor.requestFocus();
-            return;
-        }
-
-        int year = 0;
-        if (!yearStr.isEmpty()) {
-            try {
-                year = Integer.parseInt(yearStr);
-            } catch (NumberFormatException e) {
-                etYear.setError("Tahun tidak valid");
-                etYear.requestFocus();
-                return;
+        String validationError = viewModel.validateInput(title, author, yearStr);
+        if (validationError != null) {
+            switch (validationError) {
+                case "title":
+                    etTitle.setError("Judul buku harus diisi");
+                    etTitle.requestFocus();
+                    break;
+                case "author":
+                    etAuthor.setError("Penulis harus diisi");
+                    etAuthor.requestFocus();
+                    break;
+                case "year":
+                    etYear.setError("Tahun tidak valid");
+                    etYear.requestFocus();
+                    break;
             }
+            return;
         }
 
-        Book book = new Book(title, author, year, isbn);
+        int year = yearStr.isEmpty() ? 0 : Integer.parseInt(yearStr);
 
         if (isEditMode) {
-            book.setId(bookId);
-            databaseHelper.updateBook(book);
+            viewModel.updateBook(bookId, title, author, year, isbn);
             Toast.makeText(this, "Buku berhasil diupdate", Toast.LENGTH_SHORT).show();
         } else {
-            databaseHelper.insertBook(book);
+            viewModel.insertBook(title, author, year, isbn);
             Toast.makeText(this, "Buku berhasil ditambahkan", Toast.LENGTH_SHORT).show();
         }
 
         finish();
+    }
+
+    private String getText(TextInputEditText editText) {
+        return editText.getText() != null ? editText.getText().toString().trim() : "";
     }
 
     @Override

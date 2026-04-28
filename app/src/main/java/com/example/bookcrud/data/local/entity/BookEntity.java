@@ -1,24 +1,17 @@
-package com.example.bookcrud.model;
+package com.example.bookcrud.data.local.entity;
 
-public class Book {
+public class BookEntity {
     private int id;
     private String title;
     private String author;
     private int year;
     private String isbn;
 
-    public Book() {
+    public BookEntity() {
     }
 
-    public Book(int id, String title, String author, int year, String isbn) {
+    public BookEntity(int id, String title, String author, int year, String isbn) {
         this.id = id;
-        this.title = title;
-        this.author = author;
-        this.year = year;
-        this.isbn = isbn;
-    }
-
-    public Book(String title, String author, int year, String isbn) {
         this.title = title;
         this.author = author;
         this.year = year;
@@ -63,10 +56,5 @@ public class Book {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
-    }
-
-    @Override
-    public String toString() {
-        return title + " - " + author + " (" + year + ")";
     }
 }

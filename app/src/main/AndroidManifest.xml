@@ -11,12 +11,12 @@
         android:theme="@style/Theme.BookCRUD">
 
         <activity
-            android:name=".AddEditBookActivity"
+            android:name=".presentation.addeditbook.AddEditBookActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".presentation.booklist.BookListActivity" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.booklist.BookListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
