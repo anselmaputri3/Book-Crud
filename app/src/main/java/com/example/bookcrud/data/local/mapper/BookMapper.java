@@ -11,7 +11,14 @@ public class BookMapper {
                 entity.getTitle(),
                 entity.getAuthor(),
                 entity.getYear(),
-                entity.getIsbn()
+                entity.getIsbn(),
+                entity.getGenre(),
+                entity.getSynopsis(),
+                entity.getCoverPath(),
+                entity.getPages(),
+                entity.getRating(),
+                entity.isReading(),
+                entity.getReadingProgress()
         );
     }
 
@@ -21,7 +28,14 @@ public class BookMapper {
                 domain.getTitle(),
                 domain.getAuthor(),
                 domain.getYear(),
-                domain.getIsbn()
+                domain.getIsbn(),
+                domain.getGenre(),
+                domain.getSynopsis(),
+                domain.getCoverPath(),
+                domain.getPages(),
+                domain.getRating(),
+                domain.isReading(),
+                domain.getReadingProgress()
         );
     }
 }

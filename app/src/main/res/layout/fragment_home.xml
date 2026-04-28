@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/app_name"
+                android:textColor="@color/text_white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:contentDescription="Profile"
+                app:tint="@color/purple_light" />
+        </LinearLayout>
+
+        <!-- Search Bar -->
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_search"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="12dp"
+            android:drawableTint="@color/text_muted"
+            android:hint="@string/search_hint"
+            android:inputType="text"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/text_white"
+            android:textColorHint="@color/text_muted"
+            android:textSize="14sp" />
+
+        <!-- Currently Reading Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/currently_reading"
+            android:textColor="@color/text_white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:drawableStart="@android:drawable/presence_online"
+            android:drawablePadding="8dp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCurrentlyReading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Book Cover + Info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivCurrentCover"
+                        android:layout_width="100dp"
+                        android:layout_height="140dp"
+                        android:background="@drawable/bg_book_cover"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="Book Cover" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <!-- Genre Tags -->
+                        <LinearLayout
+                            android:id="@+id/llCurrentTags"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+
+                            <TextView
+                                android:id="@+id/tvCurrentGenre"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_tag_purple"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="4dp"
+                                android:textColor="@color/purple_soft"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvCurrentTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No book selected"
+                            android:textColor="@color/text_white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvCurrentAuthor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/text_gray"
+                            android:textSize="14sp" />
+
+                        <!-- Progress -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ProgressBar
+                                android:id="@+id/progressCurrent"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="0dp"
+                                android:layout_height="6dp"
+                                android:layout_weight="1"
+                                android:max="100"
+                                android:progress="45"
+                                android:progressDrawable="@drawable/bg_progress_bar" />
+
+                            <TextView
+                                android:id="@+id/tvCurrentProgress"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:text="0%"
+                                android:textColor="@color/purple_light"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Synopsis Preview -->
+                <TextView
+                    android:id="@+id/tvCurrentSynopsis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
+
+                <!-- Continue Reading Button -->
+                <TextView
+                    android:id="@+id/btnContinueReading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_button_green"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp"
+                    android:text="@string/continue_reading"
+                    android:textColor="@color/text_white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Empty State for Currently Reading -->
+        <TextView
+            android:id="@+id/tvNoCurrentlyReading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_card_dark"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="No book currently being read"
+            android:textColor="@color/text_muted"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <!-- My Library Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/my_library"
+                android:textColor="@color/text_white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:drawableStart="@android:drawable/ic_menu_agenda"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/purple_light" />
+
+            <TextView
+                android:id="@+id/tvViewAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_all"
+                android:textColor="@color/purple_light"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Book Grid (RecyclerView) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvLibrary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+        <!-- Empty Library State -->
+        <TextView
+            android:id="@+id/tvEmptyLibrary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_dark"
+            android:gravity="center"
+            android:padding="40dp"
+            android:text="@string/no_books"
+            android:textAlignment="center"
+            android:textColor="@color/text_muted"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

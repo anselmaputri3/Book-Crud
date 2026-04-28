@@ -1,9 +1,10 @@
 package com.example.bookcrud.presentation.adapter;
 
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,19 +13,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookcrud.R;
 import com.example.bookcrud.domain.entity.Book;
 
+import java.io.File;
 import java.util.List;
 
-public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
+public class BookGridAdapter extends RecyclerView.Adapter<BookGridAdapter.BookViewHolder> {
 
     private List<Book> bookList;
     private final OnBookClickListener listener;
 
     public interface OnBookClickListener {
-        void onEditClick(Book book);
-        void onDeleteClick(Book book);
+        void onBookClick(Book book);
+        void onBookLongClick(Book book);
     }
 
-    public BookAdapter(List<Book> bookList, OnBookClickListener listener) {
+    public BookGridAdapter(List<Book> bookList, OnBookClickListener listener) {
         this.bookList = bookList;
         this.listener = listener;
     }
@@ -33,7 +35,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     @Override
     public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_book, parent, false);
+                .inflate(R.layout.item_book_grid, parent, false);
         return new BookViewHolder(view);
     }
 
@@ -48,37 +50,41 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         return bookList.size();
     }
 
-    public void updateData(List<Book> newBookList) {
-        this.bookList = newBookList;
+    public void updateData(List<Book> newList) {
+        this.bookList = newList;
         notifyDataSetChanged();
     }
 
     static class BookViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView ivBookCover;
         private final TextView tvTitle;
         private final TextView tvAuthor;
-        private final TextView tvYear;
-        private final TextView tvIsbn;
-        private final ImageButton btnEdit;
-        private final ImageButton btnDelete;
 
         BookViewHolder(@NonNull View itemView) {
             super(itemView);
+            ivBookCover = itemView.findViewById(R.id.ivBookCover);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvAuthor = itemView.findViewById(R.id.tvAuthor);
-            tvYear = itemView.findViewById(R.id.tvYear);
-            tvIsbn = itemView.findViewById(R.id.tvIsbn);
-            btnEdit = itemView.findViewById(R.id.btnEdit);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
 
         void bind(Book book, OnBookClickListener listener) {
             tvTitle.setText(book.getTitle());
             tvAuthor.setText(book.getAuthor());
-            tvYear.setText(String.valueOf(book.getYear()));
-            tvIsbn.setText("ISBN: " + (book.getIsbn() != null ? book.getIsbn() : "-"));
 
-            btnEdit.setOnClickListener(v -> listener.onEditClick(book));
-            btnDelete.setOnClickListener(v -> listener.onDeleteClick(book));
+            String coverPath = book.getCoverPath();
+            if (coverPath != null && !coverPath.isEmpty() && new File(coverPath).exists()) {
+                ivBookCover.setImageBitmap(BitmapFactory.decodeFile(coverPath));
+                ivBookCover.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            } else {
+                ivBookCover.setImageResource(android.R.drawable.ic_menu_gallery);
+                ivBookCover.setScaleType(ImageView.ScaleType.CENTER);
+            }
+
+            itemView.setOnClickListener(v -> listener.onBookClick(book));
+            itemView.setOnLongClickListener(v -> {
+                listener.onBookLongClick(book);
+                return true;
+            });
         }
     }
 }
