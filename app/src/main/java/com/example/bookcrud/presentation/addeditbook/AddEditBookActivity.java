@@ -171,28 +171,31 @@ public class AddEditBookActivity extends AppCompatActivity {
     }
 
     private void saveCoverImage(Uri uri) {
+        InputStream inputStream = null;
+        FileOutputStream fos = null;
         try {
-            InputStream inputStream = getContentResolver().openInputStream(uri);
+            inputStream = getContentResolver().openInputStream(uri);
             if (inputStream == null) return;
 
             File coverDir = new File(getFilesDir(), "covers");
             if (!coverDir.exists()) coverDir.mkdirs();
 
             File coverFile = new File(coverDir, "cover_" + System.currentTimeMillis() + ".jpg");
-            FileOutputStream fos = new FileOutputStream(coverFile);
+            fos = new FileOutputStream(coverFile);
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 fos.write(buffer, 0, bytesRead);
             }
-            fos.close();
-            inputStream.close();
 
             coverPath = coverFile.getAbsolutePath();
             ivCoverPreview.setImageBitmap(BitmapFactory.decodeFile(coverPath));
             ivCoverPreview.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } catch (Exception e) {
             Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+        } finally {
+            try { if (fos != null) fos.close(); } catch (Exception ignored) {}
+            try { if (inputStream != null) inputStream.close(); } catch (Exception ignored) {}
         }
     }
 }

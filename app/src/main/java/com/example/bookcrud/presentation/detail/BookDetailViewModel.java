@@ -33,6 +33,22 @@ public class BookDetailViewModel extends ViewModel {
         book.setValue(getBookByIdUseCase.execute(id));
     }
 
+    public void toggleReading() {
+        Book currentBook = book.getValue();
+        if (currentBook != null) {
+            boolean nowReading = !currentBook.isReading();
+            int progress = nowReading ? 0 : 100;
+            Book updated = new Book(
+                    currentBook.getId(), currentBook.getTitle(), currentBook.getAuthor(),
+                    currentBook.getYear(), currentBook.getIsbn(), currentBook.getGenre(),
+                    currentBook.getSynopsis(), currentBook.getCoverPath(), currentBook.getPages(),
+                    currentBook.getRating(), nowReading, progress
+            );
+            updateBookUseCase.execute(updated);
+            book.setValue(updated);
+        }
+    }
+
     public void markAsRead(int bookId) {
         Book currentBook = book.getValue();
         if (currentBook != null) {

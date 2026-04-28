@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_add) {
                 startActivity(new Intent(this, AddEditBookActivity.class));
-                return true;
+                return false;
             } else if (id == R.id.nav_stats) {
                 loadFragment(new ProfileFragment());
                 return true;

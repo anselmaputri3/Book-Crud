@@ -49,6 +49,7 @@ public class BookDetailActivity extends AppCompatActivity {
         TextView tvYear = findViewById(R.id.tvDetailYear);
         TextView tvPages = findViewById(R.id.tvDetailPages);
         TextView tvIsbn = findViewById(R.id.tvDetailIsbn);
+        TextView btnMarkAsRead = findViewById(R.id.btnMarkAsRead);
 
         viewModel.getBook().observe(this, book -> {
             if (book == null) return;
@@ -62,6 +63,14 @@ public class BookDetailActivity extends AppCompatActivity {
             tvYear.setText(book.getYear() > 0 ? String.valueOf(book.getYear()) : "-");
             tvPages.setText(book.getPages() > 0 ? String.valueOf(book.getPages()) : "-");
             tvIsbn.setText(book.getIsbn() != null && !book.getIsbn().isEmpty() ? book.getIsbn() : "-");
+
+            if (book.isReading()) {
+                btnMarkAsRead.setText("Mark as Read");
+                btnMarkAsRead.setBackgroundResource(R.drawable.bg_button_green);
+            } else {
+                btnMarkAsRead.setText("Start Reading");
+                btnMarkAsRead.setBackgroundResource(R.drawable.bg_button_purple);
+            }
 
             String coverPath = book.getCoverPath();
             if (coverPath != null && !coverPath.isEmpty() && new File(coverPath).exists()) {
@@ -79,8 +88,16 @@ public class BookDetailActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         findViewById(R.id.btnMarkAsRead).setOnClickListener(v -> {
-            viewModel.markAsRead(bookId);
-            Toast.makeText(this, "Marked as read!", Toast.LENGTH_SHORT).show();
+            Book currentBook = viewModel.getBook().getValue();
+            if (currentBook != null) {
+                if (currentBook.isReading()) {
+                    viewModel.markAsRead(bookId);
+                    Toast.makeText(this, "Marked as read!", Toast.LENGTH_SHORT).show();
+                } else {
+                    viewModel.toggleReading();
+                    Toast.makeText(this, "Started reading!", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
 
         findViewById(R.id.btnEditBook).setOnClickListener(v -> {
