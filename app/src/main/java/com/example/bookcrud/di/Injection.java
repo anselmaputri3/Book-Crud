@@ -9,9 +9,13 @@ import com.example.bookcrud.domain.repository.BookRepository;
 import com.example.bookcrud.domain.usecase.DeleteBookUseCase;
 import com.example.bookcrud.domain.usecase.GetAllBooksUseCase;
 import com.example.bookcrud.domain.usecase.GetBookByIdUseCase;
+import com.example.bookcrud.domain.usecase.GetCurrentlyReadingUseCase;
 import com.example.bookcrud.domain.usecase.InsertBookUseCase;
 import com.example.bookcrud.domain.usecase.SearchBooksUseCase;
 import com.example.bookcrud.domain.usecase.UpdateBookUseCase;
+import com.example.bookcrud.presentation.addeditbook.AddEditBookViewModelFactory;
+import com.example.bookcrud.presentation.booklist.BookListViewModelFactory;
+import com.example.bookcrud.presentation.detail.BookDetailViewModelFactory;
 
 public class Injection {
 
@@ -34,6 +38,10 @@ public class Injection {
         return new GetBookByIdUseCase(provideBookRepository(context));
     }
 
+    public static GetCurrentlyReadingUseCase provideGetCurrentlyReadingUseCase(Context context) {
+        return new GetCurrentlyReadingUseCase(provideBookRepository(context));
+    }
+
     public static InsertBookUseCase provideInsertBookUseCase(Context context) {
         return new InsertBookUseCase(provideBookRepository(context));
     }
@@ -48,5 +56,29 @@ public class Injection {
 
     public static SearchBooksUseCase provideSearchBooksUseCase(Context context) {
         return new SearchBooksUseCase(provideBookRepository(context));
+    }
+
+    public static BookListViewModelFactory provideBookListViewModelFactory(Context context) {
+        return new BookListViewModelFactory(
+                provideGetAllBooksUseCase(context),
+                provideGetCurrentlyReadingUseCase(context),
+                provideDeleteBookUseCase(context),
+                provideSearchBooksUseCase(context)
+        );
+    }
+
+    public static AddEditBookViewModelFactory provideAddEditBookViewModelFactory(Context context) {
+        return new AddEditBookViewModelFactory(
+                provideInsertBookUseCase(context),
+                provideUpdateBookUseCase(context)
+        );
+    }
+
+    public static BookDetailViewModelFactory provideBookDetailViewModelFactory(Context context) {
+        return new BookDetailViewModelFactory(
+                provideGetBookByIdUseCase(context),
+                provideUpdateBookUseCase(context),
+                provideDeleteBookUseCase(context)
+        );
     }
 }

@@ -19,31 +19,28 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public long insertBook(Book book) {
-        BookEntity entity = BookMapper.toEntity(book);
-        return bookDao.insert(entity);
+        return bookDao.insert(BookMapper.toEntity(book));
     }
 
     @Override
     public Book getBookById(int id) {
         BookEntity entity = bookDao.getById(id);
-        if (entity == null) return null;
-        return BookMapper.toDomain(entity);
+        return entity != null ? BookMapper.toDomain(entity) : null;
     }
 
     @Override
     public List<Book> getAllBooks() {
-        List<BookEntity> entities = bookDao.getAll();
-        List<Book> books = new ArrayList<>();
-        for (BookEntity entity : entities) {
-            books.add(BookMapper.toDomain(entity));
-        }
-        return books;
+        return mapList(bookDao.getAll());
+    }
+
+    @Override
+    public List<Book> getCurrentlyReading() {
+        return mapList(bookDao.getCurrentlyReading());
     }
 
     @Override
     public int updateBook(Book book) {
-        BookEntity entity = BookMapper.toEntity(book);
-        return bookDao.update(entity);
+        return bookDao.update(BookMapper.toEntity(book));
     }
 
     @Override
@@ -53,16 +50,19 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public List<Book> searchBooks(String keyword) {
-        List<BookEntity> entities = bookDao.search(keyword);
-        List<Book> books = new ArrayList<>();
-        for (BookEntity entity : entities) {
-            books.add(BookMapper.toDomain(entity));
-        }
-        return books;
+        return mapList(bookDao.search(keyword));
     }
 
     @Override
     public int getBookCount() {
         return bookDao.count();
+    }
+
+    private List<Book> mapList(List<BookEntity> entities) {
+        List<Book> books = new ArrayList<>();
+        for (BookEntity entity : entities) {
+            books.add(BookMapper.toDomain(entity));
+        }
+        return books;
     }
 }

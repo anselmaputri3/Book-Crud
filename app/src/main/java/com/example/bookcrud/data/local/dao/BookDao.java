@@ -29,8 +29,7 @@ public class BookDao {
     public BookEntity getById(int id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(
-                BookDatabaseHelper.TABLE_BOOKS,
-                null,
+                BookDatabaseHelper.TABLE_BOOKS, null,
                 BookDatabaseHelper.COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)},
                 null, null, null
@@ -64,12 +63,31 @@ public class BookDao {
         return list;
     }
 
+    public List<BookEntity> getCurrentlyReading() {
+        List<BookEntity> list = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(
+                BookDatabaseHelper.TABLE_BOOKS, null,
+                BookDatabaseHelper.COLUMN_IS_READING + "=1",
+                null, null, null,
+                BookDatabaseHelper.COLUMN_TITLE + " ASC"
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(cursorToEntity(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
     public int update(BookEntity entity) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = toContentValues(entity);
         int rows = db.update(
-                BookDatabaseHelper.TABLE_BOOKS,
-                values,
+                BookDatabaseHelper.TABLE_BOOKS, values,
                 BookDatabaseHelper.COLUMN_ID + "=?",
                 new String[]{String.valueOf(entity.getId())}
         );
@@ -93,9 +111,10 @@ public class BookDao {
         String query = "SELECT * FROM " + BookDatabaseHelper.TABLE_BOOKS
                 + " WHERE " + BookDatabaseHelper.COLUMN_TITLE + " LIKE ?"
                 + " OR " + BookDatabaseHelper.COLUMN_AUTHOR + " LIKE ?"
+                + " OR " + BookDatabaseHelper.COLUMN_GENRE + " LIKE ?"
                 + " ORDER BY " + BookDatabaseHelper.COLUMN_TITLE + " ASC";
         String pattern = "%" + keyword + "%";
-        Cursor cursor = db.rawQuery(query, new String[]{pattern, pattern});
+        Cursor cursor = db.rawQuery(query, new String[]{pattern, pattern, pattern});
 
         if (cursor.moveToFirst()) {
             do {
@@ -127,6 +146,13 @@ public class BookDao {
         values.put(BookDatabaseHelper.COLUMN_AUTHOR, entity.getAuthor());
         values.put(BookDatabaseHelper.COLUMN_YEAR, entity.getYear());
         values.put(BookDatabaseHelper.COLUMN_ISBN, entity.getIsbn());
+        values.put(BookDatabaseHelper.COLUMN_GENRE, entity.getGenre());
+        values.put(BookDatabaseHelper.COLUMN_SYNOPSIS, entity.getSynopsis());
+        values.put(BookDatabaseHelper.COLUMN_COVER_PATH, entity.getCoverPath());
+        values.put(BookDatabaseHelper.COLUMN_PAGES, entity.getPages());
+        values.put(BookDatabaseHelper.COLUMN_RATING, entity.getRating());
+        values.put(BookDatabaseHelper.COLUMN_IS_READING, entity.isReading() ? 1 : 0);
+        values.put(BookDatabaseHelper.COLUMN_READING_PROGRESS, entity.getReadingProgress());
         return values;
     }
 
@@ -136,7 +162,14 @@ public class BookDao {
                 cursor.getString(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_TITLE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_AUTHOR)),
                 cursor.getInt(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_YEAR)),
-                cursor.getString(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_ISBN))
+                cursor.getString(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_ISBN)),
+                cursor.getString(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_GENRE)),
+                cursor.getString(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_SYNOPSIS)),
+                cursor.getString(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_COVER_PATH)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_PAGES)),
+                cursor.getFloat(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_RATING)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_IS_READING)) == 1,
+                cursor.getInt(cursor.getColumnIndexOrThrow(BookDatabaseHelper.COLUMN_READING_PROGRESS))
         );
     }
 }

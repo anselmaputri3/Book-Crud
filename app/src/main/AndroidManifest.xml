@@ -11,18 +11,24 @@
         android:theme="@style/Theme.BookCRUD">
 
         <activity
-            android:name=".presentation.addeditbook.AddEditBookActivity"
-            android:exported="false"
-            android:parentActivityName=".presentation.booklist.BookListActivity" />
-
-        <activity
-            android:name=".presentation.booklist.BookListActivity"
+            android:name=".presentation.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presentation.addeditbook.AddEditBookActivity"
+            android:exported="false"
+            android:parentActivityName=".presentation.main.MainActivity" />
+
+        <activity
+            android:name=".presentation.detail.BookDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".presentation.main.MainActivity" />
+
     </application>
 
 </manifest>

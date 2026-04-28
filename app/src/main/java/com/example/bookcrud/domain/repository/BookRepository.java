@@ -8,6 +8,7 @@ public interface BookRepository {
     long insertBook(Book book);
     Book getBookById(int id);
     List<Book> getAllBooks();
+    List<Book> getCurrentlyReading();
     int updateBook(Book book);
     void deleteBook(int id);
     List<Book> searchBooks(String keyword);
